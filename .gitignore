@@ -1,0 +1,14 @@
+/node_modules
+*.DS_Store
+.buildpath
+.project
+.settings
+.idea
+*.swp
+build
+sftp-config.json
+.tags
+.tags_sorted_by_file
+*.env
+/nbproject/private/
+/vendor/
