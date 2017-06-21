@@ -74,19 +74,64 @@
 		}
 	}
 
-	/* TODO::JSONP*/
-	function ajaxJsonp() {
 
+	/* TODO::JSONP*/
+	function ajaxJsonp(options) {
+		this.options = options || {};
+		this._callback  = null;
+		this._params = null;
+		this._os = null;
+		this._$head = null;
+		this.createScript()
+	}
+
+	ajaxJsonp.prototype.createScript = function () {
+		this._callback = ('jsonp_' + Math.random()).replace('.', '');
+		this._$head = document.getElementsByTagName('head')[0];
+		this.options.data['callback'] = this._callback;
+		this._params = this.formatParams(this.options.data);
+		this._os = document.createElement('script');
+		this._$head.appendChild(this._os);
+		this.createCallback();
+	}
+
+	ajaxJsonp.prototype.createCallback = function () {
+		var _self = this
+		window[_self._callback] = function (json) {
+			_self._$head.removeChild(_self._os);
+			clearTimeout(_self._os.timer);
+			window[_self._callback] = null
+			_self.options.success && _self.options.success(json)
+		}
+		this.send();
+	}
+
+	ajaxJsonp.prototype.send = function () {
+		this._os.src = this.options.url + '?' + this._params;
+		/*超时处理*/
+		this._os.timer = setTimeout(function () {
+			window[_self._callback] = null;
+			_self._$head.removeChild(_self._os);
+			_self.options.fail && _self.options.fail()
+		}, 10000)
+	}
+
+	ajaxJsonp.prototype.formatParams = function (data) {
+		var arr = [];
+		for (var name in data) {
+			arr.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]));
+		}
+		return arr.join('&');
 	}
 
 	return {
 		ajax: function(options) {
 			return new ajax(options)
 		},
-		jsonp: ajaxJsonp()
+		jsonp: function(options) {
+			return new ajaxJsonp(options)
+		},
 	}
 
 })
-
-
 
