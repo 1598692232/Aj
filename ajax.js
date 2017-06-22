@@ -1,13 +1,13 @@
 /**
  * Created by EX-pengzhiliang001 on 2017-06-20.
  */
-(function(undefined,factory){
+(function(factory,undefined){
 	if(typeof module === 'object' && typeof module.exports == 'object'){
 		module.exports = factory();
 	}else{
 		window.Aj = factory();
 	}
-})(undefined, function() {
+})(function() {
 	/*TODO::ajax*/
 	function ajax(options) {
 		this.options = options || {};
